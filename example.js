@@ -2,6 +2,8 @@ import * as THREE from './three/build/three.module.js';
 
 import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
 
+import { GLTFLoader } from './three/examples/jsm/loaders/GLTFLoader.js';
+
 let canvas, renderer;
 
 const scenes = [];
@@ -13,6 +15,7 @@ function init() {
 
     canvas = document.getElementById( "c" );
 
+    // 🧊
     const geometries = [
         new THREE.BoxGeometry( 1, 1, 1 ),
         new THREE.SphereGeometry( 0.5, 12, 8 ),
@@ -22,7 +25,7 @@ function init() {
 
     const content = document.getElementById( 'content' );
 
-    for ( let i = 0; i < 40; i ++ ) {
+    for ( let i = 0; i < 20; i ++ ) {
 
         const scene = new THREE.Scene();
 
@@ -41,20 +44,22 @@ function init() {
         scene.userData.element = sceneElement;
         content.appendChild( element );
 
-        const camera = new THREE.PerspectiveCamera( 50, 1, 1, 10 );
-        camera.position.z = 2;
+        const camera = new THREE.PerspectiveCamera( 50, 1, 1, 100 );
+        camera.position.z = 30;
         scene.userData.camera = camera;
 
         const controls = new OrbitControls( scene.userData.camera, scene.userData.element );
         controls.minDistance = 2;
-        controls.maxDistance = 5;
+        controls.maxDistance = 30;
         controls.enablePan = false;
         controls.enableZoom = false;
         scene.userData.controls = controls;
 
         // add one random mesh to each scene
+        // 🧊
         const geometry = geometries[ geometries.length * Math.random() | 0 ];
 
+        // 🧊
         const material = new THREE.MeshStandardMaterial( {
 
             color: new THREE.Color().setHSL( Math.random(), 1, 0.75 ),
@@ -64,12 +69,21 @@ function init() {
 
         } );
 
-        scene.add( new THREE.Mesh( geometry, material ) );
+        // 🧊
+        // scene.add( new THREE.Mesh( geometry, material ) );
+
+        const loader = new GLTFLoader();
+
+        loader.load( './obj/cloudrainbow.gltf', function(gltf) {
+            scene.add( gltf.scene );
+        }, undefined, function (error) {
+            console.error( error );
+        });
 
         scene.add( new THREE.HemisphereLight( 0xaaaaaa, 0x444444 ) );
 
-        const light = new THREE.DirectionalLight( 0xffffff, 0.5 );
-        light.position.set( 1, 1, 1 );
+        const light = new THREE.DirectionalLight( 0xffffff, 20 );
+        light.position.set( 50, 50, 50 );
         scene.add( light );
 
         scenes.push( scene );
